@@ -51,7 +51,7 @@ class TokenGenerator:
                     self.storage.save(ctx, "humanized.txt")
                 
         except Exception as e:
-            if isinstance(self.mail_api, CybertempApi) and ctx.email:
+            if isinstance(self.mail_api, CybertempApi) and ctx:
                 self.mail_api.delete_mailbox(email=ctx.email)
             self.logger.log(f"Account generation failed -> {NexusColor.RED}{e} ")
         

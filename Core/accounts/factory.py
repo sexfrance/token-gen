@@ -25,7 +25,7 @@ class AccountContextFactory:
         self.logger.log(f"Got Mail -> {NexusColor.PURPLE}{email}")
         birthday = Utils.random_birthday()
         y, m, d = birthday
-        self.logger.log(f"Got Birthday -> {NexusColor.PURPLE}{f"{y}-{m:02d}-{d:02d}"}")
+        self.logger.log(f"Got Birthday -> {NexusColor.PURPLE}{f'{y}-{m:02d}-{d:02d}'}")
         
 
         headers = HeaderBuilder(self.session).build(fp=fingerprint)

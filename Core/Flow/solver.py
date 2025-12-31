@@ -43,7 +43,8 @@ class Solver:
 
             if status == "success":
                 elapsed = time.time() - start
-                self.logger.log(f"Captcha Solved in {NexusColor.PURPLE}{elapsed:.1f}s {NexusColor.LIGHTBLACK}({NexusColor.PURPLE}{data["uuid"][:64]}{NexusColor.LIGHTBLACK})")
+                uuid_str = data["uuid"][:64]
+                self.logger.log(f"Captcha Solved in {NexusColor.PURPLE}{elapsed:.1f}s {NexusColor.LIGHTBLACK}({NexusColor.PURPLE}{uuid_str}{NexusColor.LIGHTBLACK})")
                 return data
             
             if status == "error":

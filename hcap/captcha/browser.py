@@ -1,26 +1,48 @@
 import re
-
 from camoufox.async_api import AsyncCamoufox
-
 
 class BrowserFactory:
     @staticmethod
-    async def create(proxy=None):
+    async def create_browser():
         cfg = {
             "headless": True,
             "humanize": False,
-            "block_webrtc": True,
             "geoip": True,
-            "os": "windows",
+            "os": ["macos", "linux"],
         }
+        return await AsyncCamoufox(**cfg).start()
+
+    @staticmethod
+    async def create_context(browser, proxy=None):
+        ctx_cfg = {"locale": "nl"}
+
         if proxy:
             user, password, server = re.match(r'(.*?):(.*?)@(.*)', proxy).groups()
-            proxy_config = {"server": f"http://{server}"}
-            proxy_config["username"] = user
-            proxy_config["password"] = password
-            cfg["proxy"] = proxy_config
+            ctx_cfg["proxy"] = {
+                "server": f"http://{server}",
+                "username": user,
+                "password": password,
+            }
 
-        browser = await AsyncCamoufox(**cfg).start()
-        context = await browser.new_context(locale="nl")
+        context = await browser.new_context(**ctx_cfg)
         page = await context.new_page()
-        return browser, context, page
+        return context, page
+
+
+class BrowserManager:
+    def __init__(self):
+        self.browser = None
+
+    async def reset_browser(self):
+        if self.browser:
+            try:
+                await self.browser.close()
+            except Exception:
+                pass
+            self.browser = None
+
+    async def create_context(self, proxy=None):
+        if not self.browser:
+            self.browser = await BrowserFactory.create_browser()
+        context, page = await BrowserFactory.create_context(self.browser, proxy)
+        return context, page

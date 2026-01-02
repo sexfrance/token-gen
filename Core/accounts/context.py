@@ -32,17 +32,8 @@ class TitleBarStats:
     start_time: float = field(default_factory=time)
     _token_times: deque = field(default_factory=deque, init=False, repr=False)
 
-    def mark_token(self):
-        now = time()
-        self.token_generated += 1
-        self._token_times.append(now)
-
-        while self._token_times and now - self._token_times[0] > 60:
-            self._token_times.popleft()
-
     def mark_valid(self):
         self.token_generated += 1
-        self.ev_tokens += 1
         self.consecutive_failures = 0
         self.soft_flag_hits = 0
         self._mark_time()
@@ -81,8 +72,12 @@ class TitleBarStats:
         return False
 
     @property
-    def tokens_per_minute(self) -> int:
-        return len(self._token_times)
+    def tokens_per_minute(self) -> float:
+        elapsed_seconds = max(time() - self.start_time, 1)
+        elapsed_minutes = elapsed_seconds / 60
+        return round(self.token_generated / elapsed_minutes, 2)
+
+
 
     @property
     def time_elapsed(self) -> int:
